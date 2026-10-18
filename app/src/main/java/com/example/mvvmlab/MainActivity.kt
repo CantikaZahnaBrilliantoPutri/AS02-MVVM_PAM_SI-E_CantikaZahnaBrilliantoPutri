@@ -11,6 +11,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,7 +63,10 @@ fun TaskScreen(viewModel: TaskViewModel = viewModel()) {
                         checked = task.done,
                         onCheckedChange = { viewModel.toggleDone(task.id) }
                     )
-                    Text(task.title)
+                    Text(task.title, modifier = Modifier.weight(1f))
+                    TextButton(onClick = { viewModel.deleteTask(task.id) }) {
+                        Text("Hapus")
+                    }
                 }
             }
         }

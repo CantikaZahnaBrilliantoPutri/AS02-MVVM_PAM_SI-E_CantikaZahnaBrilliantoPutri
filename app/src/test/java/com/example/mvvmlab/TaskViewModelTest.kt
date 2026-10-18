@@ -44,4 +44,21 @@ class TaskViewModelTest {
         viewModel.addTask(" ")
         assertEquals(2, viewModel.tasks.value.size)
     }
+
+    // A. Delete
+    @Test
+    fun deleteTask() { // ubah tanpa parameter
+        val viewModel = TaskViewModel(FakeRepository())
+        viewModel.deleteTask(1)
+        assertEquals(1, viewModel.tasks.value.size)
+        assertTrue(viewModel.tasks.value.none { it.id == 1 })
+    }
+
+    //Jika ada ID anomali
+    @Test
+    fun deleteTask_unknownId_changesNothing() {
+        val viewModel = TaskViewModel(FakeRepository())
+        viewModel.deleteTask(99)
+        assertEquals(2, viewModel.tasks.value.size)
+    }
 }
