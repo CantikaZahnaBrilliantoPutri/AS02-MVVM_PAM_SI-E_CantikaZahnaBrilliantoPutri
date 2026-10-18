@@ -36,4 +36,16 @@ class TaskViewModel(
     fun deleteTask(taskId: Int) {
         _tasks.update { list -> list.filterNot { it.id == taskId } }
     }
+
+    // B. Filter
+    private val _showOnlyOpen = MutableStateFlow(false)
+    val showOnlyOpen: StateFlow<Boolean> = _showOnlyOpen.asStateFlow()
+
+    // inisialisasi biar ga error
+    val visibleTasks: List<Task>
+        get() = if (_showOnlyOpen.value) _tasks.value.filter { !it.done } else _tasks.value
+
+    fun setShowOnlyOpen(value: Boolean) {
+        _showOnlyOpen.value = value
+    }
 }

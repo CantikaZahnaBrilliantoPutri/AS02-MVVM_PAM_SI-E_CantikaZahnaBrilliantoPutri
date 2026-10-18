@@ -61,4 +61,41 @@ class TaskViewModelTest {
         viewModel.deleteTask(99)
         assertEquals(2, viewModel.tasks.value.size)
     }
+
+    // B. Filter
+    @Test
+    fun filterOff_showsAllTasks() {
+        val viewModel = TaskViewModel(FakeRepository())
+        assertEquals(2, viewModel.visibleTasks.size)
+    }
+
+    @Test
+    fun filterOn_showsOnlyUnfinishedTasks() {
+        val viewModel = TaskViewModel(FakeRepository())
+        viewModel.setShowOnlyOpen(true)
+        assertEquals(listOf(1), viewModel.visibleTasks.map { it.id })
+    }
+
+    @Test
+    fun filterOn_toggleDone_updatesVisibleTasks() {
+        val viewModel = TaskViewModel(FakeRepository())
+        viewModel.setShowOnlyOpen(true)
+        viewModel.toggleDone(1)
+        assertTrue(viewModel.visibleTasks.isEmpty())
+    }
+
+    @Test
+    fun filterOn_addTask_newTaskIsVisible() {
+        val viewModel = TaskViewModel(FakeRepository())
+        viewModel.setShowOnlyOpen(true)
+        viewModel.addTask("Third")
+        assertEquals(listOf(1, 3), viewModel.visibleTasks.map { it.id })
+    }
+
+    @Test
+    fun filterOn_doesNotRemoveDataFromTasks() {
+        val viewModel = TaskViewModel(FakeRepository())
+        viewModel.setShowOnlyOpen(true)
+        assertEquals(2, viewModel.tasks.value.size)
+    }
 }

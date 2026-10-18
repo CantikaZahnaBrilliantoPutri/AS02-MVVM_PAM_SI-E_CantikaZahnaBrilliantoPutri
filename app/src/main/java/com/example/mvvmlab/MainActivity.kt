@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,6 +33,10 @@ class MainActivity : ComponentActivity() {
 fun TaskScreen(viewModel: TaskViewModel = viewModel()) {
 // Read state. Recomposes when tasks change.
     val tasks by viewModel.tasks.collectAsStateWithLifecycle()
+    // biar bisa geser UInya
+    val showOnlyOpen by viewModel.showOnlyOpen.collectAsStateWithLifecycle()
+    val visibleTasks = if (showOnlyOpen) tasks.filter { !it.done } else tasks
+
 // Purely UI state: text being typed. This does NOT belong in the ViewModel.
     var newTitle by remember { mutableStateOf("") }
     Column(Modifier.padding(16.dp)) {
@@ -53,8 +58,21 @@ fun TaskScreen(viewModel: TaskViewModel = viewModel()) {
                 Text("Add")
             }
         }
+
+        // tambahan UI buat Filter
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Filter", modifier = Modifier.weight(1f))
+            Switch(
+                checked = showOnlyOpen,
+                onCheckedChange = { viewModel.setShowOnlyOpen(it) }
+            )
+        }
+
         Column(Modifier.padding(top = 16.dp)) {
-            tasks.forEach { task ->
+            visibleTasks.forEach { task ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -63,6 +81,7 @@ fun TaskScreen(viewModel: TaskViewModel = viewModel()) {
                         checked = task.done,
                         onCheckedChange = { viewModel.toggleDone(task.id) }
                     )
+                    // tambahan UI buat Delete
                     Text(task.title, modifier = Modifier.weight(1f))
                     TextButton(onClick = { viewModel.deleteTask(task.id) }) {
                         Text("Hapus")
